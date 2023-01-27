@@ -50,7 +50,13 @@ export default class WHIPClient {
      * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
      */
     async accessLocalMediaSources() {
-        return navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+        return navigator.mediaDevices.getUserMedia({ video: {
+                //@ts-ignore
+                deviceId: localStorage.getItem('video-input')
+            }, audio: {
+                //@ts-ignore
+                deviceId: localStorage.getItem('audio-input')
+            } }).then(stream => {
             stream.getTracks().forEach(track => {
                 const transceiver = this.peerConnection.addTransceiver(track, {
                     /** WHIP is only for sending streaming media */
