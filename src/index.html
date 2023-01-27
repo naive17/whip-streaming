@@ -93,9 +93,11 @@
 
 				document.getElementById('audioInput').addEventListener('change',(e)=>{
 					localStorage.setItem('audio-input',e.target.value);
+					window.location.reload();
 				})
 				document.getElementById('videoInput').addEventListener('change',(e)=>{
 					localStorage.setItem('video-input',e.target.value);
+					window.location.reload();
 				})
 
 
