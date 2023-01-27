@@ -31,6 +31,8 @@
 				<br>
 				<button id="start">START STREAM</button>
 				<br>
+				<button id="stop">START STREAM</button>
+
 			</div>
 			<div class="col">
 				<label>Watch url</label>
@@ -106,7 +108,13 @@
 					const videoElement = document.getElementById('input-video');
 
 					self.whipClient = new WHIPClient(url, videoElement);
+					window.addEventListener("beforeunload", ()=>{
+						return true;
+					});
+				})
 
+				document.getElementById('stop').addEventListener('click',()=>{
+					self.whipClient.disconnectStream();
 				})
 
 				document.getElementById('watch').addEventListener('click',()=>{
