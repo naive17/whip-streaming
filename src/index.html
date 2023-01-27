@@ -10,30 +10,97 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<h4>Broadcasting video using WHIP</h4>
-		<h5>(local mirror)</h5>
-		<video id="input-video" autoplay muted></video>
+		<div class="row">
+			<div class="col">
+				<label>Stream url</label>
+				<input id="stream_link" type="text">
+				<div class="row">
+					<div class="col">
+						<label>Audio input</label>
+						<select id="audioInput">
+							<option></option>
+						</select>
+					</div>
+					<div class="col">
+						<label>Video input</label>
+						<select id="videoInput">
+							<option></option>
+						</select>
+					</div>
+				</div>
+				<br>
+				<button id="start">START STREAM</button>
+				<br>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<h4>Broadcasting video using WHIP</h4>
+				<h5>(local mirror)</h5>
+				
+				<video id="input-video" autoplay muted></video>
+			</div>
+			<div class="col">
+				<h4>Playing video using WHEP</h4>
+				<h5>(remote content)</h5>
+				<video id="remote-video" controls autoplay muted></video>
+			</div>
+		</div>
 
+		<script type="module">
+			
+		</script>
+		
 		<script type="module">
 			import WHIPClient from './WHIPClient.js';
 
-			const url = '<WEBRTC_URL_FROM_YOUR_LIVE_INPUT>';
-			const videoElement = document.getElementById('input-video');
+			(async ()=>{
+				let devices = await navigator.mediaDevices.enumerateDevices()
+				devices.filter(v=>['audioinput','videoinput'].includes(v.kind)).forEach((v)=>{
+					let option = document.createElement('option');
+					option.setAttribute('value',v.deviceId);
+					option.textContent = v.label;
+					if (v.kind == 'audioinput'){
+						if (v.deviceId == localStorage.getItem('audio-input')){
+							option.setAttribute('selected',true);
+						}
+						document.getElementById('audioInput').appendChild(option);
+					}else{
+						if (v.deviceId == localStorage.getItem('video-input')){
+							option.setAttribute('selected',true);
+						}
+						document.getElementById('videoInput').appendChild(option);
+					}
+				})
+				
+				document.getElementById('stream_link').value = localStorage.getItem('stream_link') || '';
+				document.getElementById('stream_link').addEventListener('input',(e)=>{
+					localStorage.setItem('stream_link',e.target.value);
+				})
 
-			self.whipClient = new WHIPClient(url, videoElement);
-		</script>
+				document.getElementById('audioInput').addEventListener('change',(e)=>{
+					localStorage.setItem('audio-input',e.target.value);
+				})
+				document.getElementById('videoInput').addEventListener('change',(e)=>{
+					localStorage.setItem('video-input',e.target.value);
+				})
 
-		<h4>Playing video using WHEP</h4>
-		<h5>(remote content)</h5>
-		<video id="remote-video" controls autoplay muted></video>
 
-		<script type="module">
-			import WHEPClient from './WHEPClient.js';
+				document.getElementById('start').addEventListener('click',()=>{
+					const url = document.getElementById('stream_link').value;
+					const videoElement = document.getElementById('input-video');
 
-			const url = '<WEBRTC_PLAYBACK_URL_FROM_YOUR_LIVE_INPUT>';
-			const videoElement = document.getElementById('remote-video');
+					self.whipClient = new WHIPClient(url, videoElement);
 
-			self.whepClient = new WHEPClient(url, videoElement);
+
+					
+			
+					const svideoElement = document.getElementById('remote-video');
+
+					self.whepClient = new WHEPClient(url, svideoElement);
+				})
+				
+			})();
 		</script>
 	</body>
 </html>
