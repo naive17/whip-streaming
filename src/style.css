@@ -42,6 +42,7 @@ h5 {
 }
 
 .col {
+	padding : 10px;
 	flex-basis: 50%;
 	display: flex;
 	flex-flow : column;

@@ -32,6 +32,12 @@
 				<button id="start">START STREAM</button>
 				<br>
 			</div>
+			<div class="col">
+				<label>Watch url</label>
+				<input id="watch_link" type="text">
+				<br>
+				<button id="watch">START WATCHING</button>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col">
@@ -53,6 +59,7 @@
 		
 		<script type="module">
 			import WHIPClient from './WHIPClient.js';
+			import WHEPClient from './WHEPClient.js';
 
 			(async ()=>{
 				let devices = await navigator.mediaDevices.enumerateDevices()
@@ -78,6 +85,12 @@
 					localStorage.setItem('stream_link',e.target.value);
 				})
 
+
+				document.getElementById('watch_link').value = localStorage.getItem('watch_link') || '';
+				document.getElementById('watch_link').addEventListener('input',(e)=>{
+					localStorage.setItem('watch_link',e.target.value);
+				})
+
 				document.getElementById('audioInput').addEventListener('change',(e)=>{
 					localStorage.setItem('audio-input',e.target.value);
 				})
@@ -92,13 +105,16 @@
 
 					self.whipClient = new WHIPClient(url, videoElement);
 
+				})
 
-					
-			
+				document.getElementById('watch').addEventListener('click',()=>{
+					const url = document.getElementById('watch_link').value;
+
 					const svideoElement = document.getElementById('remote-video');
-
 					self.whepClient = new WHEPClient(url, svideoElement);
 				})
+			
+
 				
 			})();
 		</script>
